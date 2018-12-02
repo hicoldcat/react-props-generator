@@ -1,17 +1,29 @@
 import DefaultPropsValue from './defaultPropsValue'
 
 const ACCETPTYPES = [
-  'any', 'array', 'bool', 'func',
-  'number', 'object', 'string', 'node',
-  'element', 'symbol', 'instanceOf', 'oneOf',
-  'oneOfType', 'arrayOf', 'objectOf', 'shape',
+  'any',
+  'array',
+  'bool',
+  'func',
+  'number',
+  'object',
+  'string',
+  'node',
+  'element',
+  'symbol',
+  'instanceOf',
+  'oneOf',
+  'oneOfType',
+  'arrayOf',
+  'objectOf',
+  'shape',
   'exact'
 ]
 
 // Use default props unless customer has defined generate props function
 const CustomPropsValue = arg => {
   const propsValue = {}
-  
+
   for (let index = 0; index < ACCETPTYPES.length; index++) {
     if (arg.hasOwnProperty(ACCETPTYPES[index])) {
       propsValue[ACCETPTYPES[index]] = arg[ACCETPTYPES[index]]
@@ -23,4 +35,4 @@ const CustomPropsValue = arg => {
   return propsValue
 }
 
-export default (arg) => CustomPropsValue(arg)
+export default arg => CustomPropsValue(arg)

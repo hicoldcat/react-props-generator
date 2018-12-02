@@ -1,138 +1,97 @@
-'use strict';
+import PropTypes from 'prop-types';
+import getGenerators from './generators';
+import propsGenerator from './propsGenerator';
+import paramsCheck from './paramsCheck'; // Value of defaultvalue
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.defaultProps = exports.defineProperty = exports.defineProperties = undefined;
+let defaultProps = {}; // Global generator options
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+let globalOptions;
 
-var _propTypes = require('prop-types');
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _generators = require('./generators');
-
-var _generators2 = _interopRequireDefault(_generators);
-
-var _propsGenerator = require('./propsGenerator');
-
-var _propsGenerator2 = _interopRequireDefault(_propsGenerator);
-
-var _paramsCheck = require('./paramsCheck');
-
-var _paramsCheck2 = _interopRequireDefault(_paramsCheck);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var defaultProps = {};
-
-var cloneDeep = require('lodash.clonedeep');
-
+const cloneDeep = require('lodash.clonedeep');
 /**
  * Define Properties
-*/
-var defineProperties = exports.defineProperties = function defineProperties(object, prop, value) {
+ */
+
+
+export const defineProperties = (object, prop, value) => {
   defineProperty(object, prop, value);
   defineProperty(object.isRequired, prop, value);
   return object;
 };
-
 /**
  * Define Property
-*/
-var defineProperty = exports.defineProperty = function defineProperty(object, prop, value) {
+ */
+
+export const defineProperty = (object, prop, value) => {
   Object.defineProperty(object, prop, {
     value: value,
     enumerable: true
   });
 };
-
 /**
  * Warper propTypes object with 'proptype' key
-*/
-var propTypesWraper = function propTypesWraper(configOptions) {
+ */
 
+const propTypesWraper = function (configOptions) {
   // configOptions check
-  var options = null;
+  let options = null;
+
   if (configOptions === undefined) {
     options = false;
   } else {
-    (0, _paramsCheck2.default)(configOptions, 'React props generator config options', ['boolean', 'object']);
+    paramsCheck(configOptions, 'React props generator config options', ['boolean', 'object']);
     options = configOptions;
   }
 
-  // Set configOptions to sessionStorage
-  if (!window.sessionStorage) {
-    throw Error('ReactPropsGenerator Error: window.sessionStorage is undefined.');
-  }
-  window.sessionStorage.setItem('ReactPropsGeneratorConfig', JSON.stringify(options));
+  globalOptions = options;
+  const Generator = getGenerators(options);
 
-  var Generator = (0, _generators2.default)(options);
-
-  if ((typeof Generator === 'undefined' ? 'undefined' : _typeof(Generator)) !== 'object') {
+  if (typeof Generator !== 'object') {
     throw new TypeError('ReactPropsGenerator Error: Generator must be object.');
   }
 
-  var array = Object.keys(Generator);
-  var original = cloneDeep(_propTypes2.default);
+  let array = Object.keys(Generator);
+  const original = cloneDeep(PropTypes);
 
-  var _loop = function _loop(index) {
-    var key = array[index];
+  for (let index = 0; index < array.length; index++) {
+    const key = array[index];
+    if (!PropTypes[key]) return; // Add field 'proptype' to PropTypes[key]
 
-    if (!_propTypes2.default[key]) return {
-        v: void 0
-      };
-
-    // Add field 'proptype' to PropTypes[key]
-    if (_propTypes2.default[key].isRequired !== undefined) {
-      _propTypes2.default[key] = defineProperties(_propTypes2.default[key], 'proptype', key);
+    if (PropTypes[key].isRequired !== undefined) {
+      PropTypes[key] = defineProperties(PropTypes[key], 'proptype', key);
     } else {
-      _propTypes2.default[key] = function (arg) {
-        var res = original[key](arg);
+      PropTypes[key] = function (arg) {
+        let res = original[key](arg);
         res = defineProperties(res, 'proptype', key);
         res = defineProperties(res, 'arg', arg);
         return res;
       };
     }
-  };
+  } // Add setter methods to component propTypes and defaultProps
 
-  for (var index = 0; index < array.length; index++) {
-    var _ret = _loop(index);
 
-    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-  }
-
-  // Add setter methods to component propTypes and defaultProps
-  return function (target) {
+  return target => {
     // React Component Type Check
-    (0, _paramsCheck2.default)(target, 'React Component', ['function']);
+    paramsCheck(target, 'React Component', ['function']); // Define Setter of Target Component propTypes
 
-    // Define Setter of Target Component propTypes 
+    let value;
     Object.defineProperty(target, 'propTypes', {
-      set: function set(newValue) {
-        if (!window.sessionStorage) {
-          throw new Error('ReactPropsGenerator Error: window.sessionStorage is undefined.');
+      set: function (newValue) {
+        value = newValue;
+
+        if (globalOptions === null || globalOptions === undefined) {
+          throw new Error(`ReactPropsGenerator Error: initPropTypes must be called before define propTypes.`);
         }
 
-        var ReactPropsGeneratorConfig = window.sessionStorage.getItem('ReactPropsGeneratorConfig');
-        if (!ReactPropsGeneratorConfig) {
-          throw new Error('ReactPropsGenerator Error: initPropTypes must be called before define propTypes.');
-        }
-
-        var config = {};
-        try {
-          config = JSON.parse(ReactPropsGeneratorConfig);
-        } catch (error) {
-          throw new Error('ReactPropsGenerator Error: GeneratorConfig can\'t be parse.');
-        }
-
-        exports.defaultProps = defaultProps = (0, _propsGenerator2.default)(target, newValue, config);
+        defaultProps = propsGenerator(target, newValue, globalOptions);
+      },
+      get: function () {
+        return value;
       }
     });
     return target;
   };
 };
 
-exports.default = propTypesWraper;
-exports.defaultProps = defaultProps;
+export default propTypesWraper;
+export { defaultProps };

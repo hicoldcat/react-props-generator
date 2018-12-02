@@ -1,4 +1,5 @@
-import initPropTypes, { defaultProps } from './propTypesWarper';
+import initPropTypes, { defaultProps } from './propTypesWarper'
+
 /**
  * API:
  *
@@ -12,6 +13,5 @@ import initPropTypes, { defaultProps } from './propTypesWarper';
  * defaultProps: Value of defaultProps.
  *
  */
-
-export default initPropTypes;
-export { defaultProps };
+export default initPropTypes
+export { defaultProps }

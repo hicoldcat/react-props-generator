@@ -3,14 +3,14 @@ import getGenerators from './generators'
 import { defineProperty } from './propTypesWarper'
 
 /**
- * 
- * Generate default props and fake props data 
+ *
+ * Generate default props and fake props data
  * base on React components's PropTypes
- * 
+ *
  * @param target: Target Component
- * 
+ *
  * @param propTypes: Target Component propTypes defined by PropTypes
- * 
+ *
  * @param configOptions: Generate configs
  */
 const propsGenerator = function (target, propTypes, configOptions) {
@@ -19,16 +19,15 @@ const propsGenerator = function (target, propTypes, configOptions) {
 
   // Get and wraper generators
   const GENERATORS = getGenerators(configOptions)
-
   let defaultProps = {}
 
-  Object.keys(propTypes).map((propName) => {
+  Object.keys(propTypes).forEach(propName => {
     const proptype = propTypes[propName].proptype
     if (proptype && GENERATORS[proptype]) {
       const value = GENERATORS[proptype](
-        propName, 
-        proptype, 
-        propTypes[propName].arg, 
+        propName,
+        proptype,
+        propTypes[propName].arg,
         {
           target,
           propTypes,
@@ -50,6 +49,5 @@ const propsGenerator = function (target, propTypes, configOptions) {
 
   return defaultProps
 }
-
 
 export default propsGenerator

@@ -4,8 +4,8 @@ import CustomPropsValue from './customPropsValue'
 
 /**
  * Get Generators By Config
-*/
-const getGenerators = (arg) => {
+ */
+const getGenerators = arg => {
   const type = typeof arg
   if (type === 'boolean') {
     if (arg) {
@@ -21,4 +21,3 @@ const getGenerators = (arg) => {
 }
 
 export default getGenerators
-

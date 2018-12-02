@@ -1,41 +1,24 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _defaultPropsValue = require('./defaultPropsValue');
-
-var _defaultPropsValue2 = _interopRequireDefault(_defaultPropsValue);
-
-var _fakePropsValue = require('./fakePropsValue');
-
-var _fakePropsValue2 = _interopRequireDefault(_fakePropsValue);
-
-var _customPropsValue = require('./customPropsValue');
-
-var _customPropsValue2 = _interopRequireDefault(_customPropsValue);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+import DefaultPropsValue from './defaultPropsValue';
+import FakePropsValue from './fakePropsValue';
+import CustomPropsValue from './customPropsValue';
 /**
  * Get Generators By Config
-*/
-var getGenerators = function getGenerators(arg) {
-  var type = typeof arg === 'undefined' ? 'undefined' : _typeof(arg);
+ */
+
+const getGenerators = arg => {
+  const type = typeof arg;
+
   if (type === 'boolean') {
     if (arg) {
-      return _fakePropsValue2.default;
+      return FakePropsValue;
     } else {
-      return _defaultPropsValue2.default;
+      return DefaultPropsValue;
     }
   } else if (type === 'object') {
-    return (0, _customPropsValue2.default)(arg);
+    return CustomPropsValue(arg);
   } else {
-    return _defaultPropsValue2.default;
+    return DefaultPropsValue;
   }
 };
 
-exports.default = getGenerators;
+export default getGenerators;

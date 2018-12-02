@@ -1,6 +1,6 @@
 {
   "name": "react-props-generator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Generate default props and fake props data base on React components's PropTypes",
   "main": "build/index.js",
   "scripts": {

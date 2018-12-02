@@ -1,5 +1,5 @@
 {
-  "name": "react-props-generator",
+  "name": "react-props-generator1",
   "version": "0.0.2",
   "description": "Generate default props and fake props data base on React components's PropTypes",
   "main": "build/index.js",
@@ -38,6 +38,7 @@
     "react": "^16.6.3",
     "react-app-rewired": "^1.6.2",
     "react-dom": "^16.6.3",
+    "react-props-generator": "0.0.2",
     "react-scripts": "2.1.1"
   },
   "devDependencies": {

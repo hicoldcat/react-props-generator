@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import initPropTypes, {defaultProps} from '../lib'
+import initPropTypes, { defaultProps } from 'react-props-generator'
 
 @initPropTypes(false)
 class TestWithDefaultProps extends Component {
